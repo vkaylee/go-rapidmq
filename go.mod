@@ -1,4 +1,4 @@
-module vstorage-rapidmq
+module go-rapidmq
 
 go 1.18
 
