@@ -1,4 +1,4 @@
-module go-rapidmq
+module github.com/vleedev/go-rapidmq
 
 go 1.18
 
