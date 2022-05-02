@@ -21,7 +21,7 @@ func NewQueue(amqpServerAddress string, amqpChannelName string) *queue {
 
 func (q *queue) execute(f func(*amqp.Channel) error) error {
 	// Create a new RabbitMQ connection.
-	connectRabbitMQ, err := amqp.Dial(q.amqpChannelName)
+	connectRabbitMQ, err := amqp.Dial(q.amqpServerAddress)
 	if err != nil {
 		panic(err)
 	}
@@ -79,7 +79,7 @@ func (q *queue) Send(info interface{}) error {
 	return q.execute(sendFunc)
 }
 
-func (q *queue) Subscribe(task func(messageFromQueue amqp.Delivery)) error {
+func (q *queue) Subscribe(task func(messageFromQueue Message)) error {
 	subscribeFunc := func(channel *amqp.Channel) error {
 		// Subscribing to QueueService1 for getting messages.
 		messages, err := channel.Consume(
@@ -107,7 +107,7 @@ func (q *queue) Subscribe(task func(messageFromQueue amqp.Delivery)) error {
 				// show received message in a console.
 				log.Printf(" > Received message: %s\n", message.Body)
 				// Do the task
-				task(message)
+				task(Message{message})
 			}
 		}()
 
