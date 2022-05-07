@@ -3,7 +3,7 @@
 ## Install
 
 ```shell
-  go get github.com/vleedev/go-rapidmq:v0.2.0
+  go get github.com/vleedev/go-rapidmq@v0.2.0
 ```
 ## Simple code to create job queue
 
