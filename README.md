@@ -19,10 +19,10 @@ import (
 
 func main() {
 	role := os.Args[1]
-	message := os.Args[1]
 	queueServer := queue.NewQueue("amqp://guest:guest@127.0.0.1:5672/")
 	myQueue := queueServer.NewOneOne("queueName1")
 	if role == "sender" {
+		message := os.Args[2]
 		if err := myQueue.Send(message); err != nil {
 			log.Fatalln(err)
 		}
@@ -55,10 +55,10 @@ import (
 
 func main() {
 	role := os.Args[1]
-	message := os.Args[1]
 	queueServer := queue.NewQueue("amqp://guest:guest@127.0.0.1:5672/")
 	myQueue := queueServer.NewOneMany("exchangeName1")
 	if role == "sender" {
+		message := os.Args[2]
 		if err := myQueue.Send(message); err != nil {
 			log.Fatalln(err)
 		}
