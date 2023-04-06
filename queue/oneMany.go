@@ -1,6 +1,7 @@
 package queue
 
 import (
+	"context"
 	"encoding/json"
 	"log"
 
@@ -19,8 +20,8 @@ func (q *queue) NewOneMany(exchangeName string) *oneMany {
 	}
 }
 
-func (o *oneMany) execute(f func(*amqp.Channel) error) error {
-	execFunc := func(ch *amqp.Channel) error {
+func (o *oneMany) execute(f func(*amqp.Channel, context.Context) error) error {
+	execFunc := func(ch *amqp.Channel, ctx context.Context) error {
 		err := ch.ExchangeDeclare(
 			o.exchangeName, // name
 			"fanout",       // type
@@ -33,7 +34,7 @@ func (o *oneMany) execute(f func(*amqp.Channel) error) error {
 		if err != nil {
 			panic(err)
 		}
-		return f(ch)
+		return f(ch, ctx)
 	}
 
 	return o.queue.execute(execFunc)
@@ -41,7 +42,7 @@ func (o *oneMany) execute(f func(*amqp.Channel) error) error {
 
 func (o *oneMany) Send(info interface{}) error {
 
-	sendFunc := func(channel *amqp.Channel) error {
+	sendFunc := func(channel *amqp.Channel, ctx context.Context) error {
 		// Encode to byte
 		data, err := json.Marshal(info)
 		if err != nil {
@@ -69,7 +70,7 @@ func (o *oneMany) Send(info interface{}) error {
 }
 
 func (o *oneMany) Subscribe(task func(messageFromQueue Message)) error {
-	subscribeFunc := func(channel *amqp.Channel) error {
+	subscribeFunc := func(channel *amqp.Channel, ctx context.Context) error {
 		q, err := channel.QueueDeclare(
 			"",    // name
 			true,  // durable

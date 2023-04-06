@@ -1,6 +1,11 @@
 package queue
 
-import amqp "github.com/rabbitmq/amqp091-go"
+import (
+	"context"
+	"time"
+
+	amqp "github.com/rabbitmq/amqp091-go"
+)
 
 type queue struct {
 	// Define RabbitMQ server URL.
@@ -13,7 +18,7 @@ func NewQueue(amqpServerAddress string) *queue {
 	}
 }
 
-func (q *queue) execute(f func(*amqp.Channel) error) error {
+func (q *queue) execute(f func(*amqp.Channel, context.Context) error) error {
 	// Create a new RabbitMQ connection.
 	conn, err := amqp.Dial(q.amqpServerAddress)
 	if err != nil {
@@ -30,5 +35,8 @@ func (q *queue) execute(f func(*amqp.Channel) error) error {
 	}
 	defer ch.Close()
 
-	return f(ch)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	return f(ch, ctx)
 }
