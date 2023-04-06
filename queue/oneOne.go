@@ -2,8 +2,9 @@ package queue
 
 import (
 	"encoding/json"
-	"github.com/streadway/amqp"
 	"log"
+
+	amqp "github.com/rabbitmq/amqp091-go"
 )
 
 type oneOne struct {

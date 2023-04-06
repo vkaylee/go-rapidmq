@@ -1,6 +1,6 @@
 package queue
 
-import "github.com/streadway/amqp"
+import amqp "github.com/rabbitmq/amqp091-go"
 
 type queue struct {
 	// Define RabbitMQ server URL.
